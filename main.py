@@ -1,6 +1,7 @@
 from tempfile import mkstemp
 from random import choice
 from binascii import a2b_base64
+import click
 
 import requests
 
@@ -18,12 +19,15 @@ def fetch_image(image_id):
     return fname
 
 
-def main():
+@click.command()
+@click.option('--set-wallpaper', type=bool, default=False, help='Sets fetched image as wallpaper.')
+def main(set_wallpaper):
     with open(IDLIST_LOC) as f:
         image_ids = f.readlines()
     image_id = choice(image_ids).strip()
     file_name = fetch_image(image_id)
-    print(file_name)
+    if set_wallpaper:
+        print(file_name)
 
 
 if __name__ == '__main__':
