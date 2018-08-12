@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from tempfile import mkstemp
 from random import choice
 from binascii import a2b_base64
