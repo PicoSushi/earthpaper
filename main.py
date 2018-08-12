@@ -16,7 +16,7 @@ def fetch_image(image_id):
 
 
 if __name__ == '__main__':
-    with open('/tmp/IDLIST') as f:
+    with open('./IDLIST') as f:
         image_ids = f.readlines()
     image_id = choice(image_ids).strip()
     file_name = fetch_image(image_id)
