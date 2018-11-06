@@ -14,9 +14,18 @@ WALLPAPER_CMD = ['feh', '--bg-fill']    # Command to set wallpaper.
 def fetch_image(image_id):
     image_url = 'https://www.gstatic.com/prettyearth/assets/data/v2/' + image_id + '.json'
     resp = requests.get(image_url)
-    result = resp.json()
+    if resp.status_code >= 400:
+        print(image_id, resp.status_code, resp.reason, image_url)
+        return False
+    else:
+        print(image_id, resp.status_code, resp.reason)
+    try:
+        result = resp.json()
+    except Exception as e:
+        print(image_id, resp.status_code, resp.reason)
+        return False
     image_bin = a2b_base64(str(result['dataUri'].split(',')[1]))
-    fname = mkstemp('-earth-{}.jpg'.format(image_id))[1]
+    fname = mkstemp('_earth-{}.jpg'.format(image_id))[1]
     with open(fname, 'wb') as f:
         f.write(image_bin)
     return fname
@@ -28,7 +37,9 @@ def main(set_wallpaper):
     with open(IDLIST_LOC) as f:
         image_ids = f.readlines()
     image_id = choice(image_ids).strip()
-    file_name = fetch_image(image_id)
+    file_name = False
+    while not file_name:
+        file_name = fetch_image(image_id)
     if set_wallpaper:
         # check if wallpaper command exists
         if len(subprocess.run(['whereis', WALLPAPER_CMD[0]], stdout=subprocess.PIPE).stdout.decode('utf8').split()
